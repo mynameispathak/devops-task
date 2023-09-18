@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  # Configuration for the 'redis' service
+  redis:
+    image: redis:latest # Use the 'redis:latest' image from Docker Hub
+    container_name: redis
+    ports:
+      - "6379:6379" # Map port 6379 on the host to port 6379 in the container
+    networks:
+      - app_network # Connect the 'redis' service to the 'app_network' network
+
+# Define a custom Docker network named 'app_network' for the services to communicate
+networks:
+  app_network:
