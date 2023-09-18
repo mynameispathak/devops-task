@@ -23,10 +23,14 @@ services:
     ports:
       - "6379:6379" # Map port 6379 on the host to port 6379 in the container
     volumes:
-      - ./redis-data:/data
+      - redis-data:/data
     networks:
       - app_network # Connect the 'redis' service to the 'app_network' network
 
-# Define a custom Docker network named 'app_network' for the services to communicate
+# Custom Docker network named 'app_network' for the services to communicate
 networks:
   app_network:
+
+# Volume to store 'redis' db data 
+volumes:
+  redis-data:
