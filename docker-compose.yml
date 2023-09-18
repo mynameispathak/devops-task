@@ -1,6 +1,21 @@
 version: '3'
 
 services:
+  # Configuration for the golang 'app' service
+  app:
+    build:
+      context: . # Build the image from the current directory
+    container_name: app
+    ports:
+      - "8080:8080" # Map port 8080 on the host to port 8080 in the container
+    environment:
+      - DEMO_APP_ADDR=0.0.0.0:8080
+      - DEMO_REDIS_ADDR=redis:6379
+    networks:
+      - app_network # Connect the 'app' service to the 'app_network' network
+    depends_on:
+      - redis # Specify that the 'app' service depends on the 'redis' service
+
   # Configuration for the 'redis' service
   redis:
     image: redis:latest # Use the 'redis:latest' image from Docker Hub
