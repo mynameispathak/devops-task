@@ -1,1 +1,0 @@
-{"dependencies":[["vagrant-qemu",["= 0.3.5"]]],"checksum":"5017e7f314151d52c3e3e850128f979785aadeebb3fca6aa881c69be851867b2","vagrant_version":"2.3.7"}
