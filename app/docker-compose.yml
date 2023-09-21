@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  # Configuration for the golang 'app' service
+  app:
+    build:
+      context: . # Build the image from the current directory
+    container_name: app
+    ports:
+      - "8080:8080" # Map port 8080 on the host to port 8080 in the container
+    environment:
+      - DEMO_APP_ADDR=0.0.0.0:8080
+      - DEMO_REDIS_ADDR=redis:6379
+    networks:
+      - app_network # Connect the 'app' service to the 'app_network' network
+    depends_on:
+      - redis # Specify that the 'app' service depends on the 'redis' service
+
+  # Configuration for the 'redis' service
+  redis:
+    image: redis:latest # Use the 'redis:latest' image from Docker Hub
+    container_name: redis
+    ports:
+      - "6379:6379" # Map port 6379 on the host to port 6379 in the container
+    volumes:
+      - redis-data:/data
+    networks:
+      - app_network # Connect the 'redis' service to the 'app_network' network
+
+  # Configuration for the 'nginx' service
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"  # Map port 80 on the host to port 80 in the container
+    volumes:
+      # - ./nginx/nginx.conf:/etc/nginx/nginx.conf  # Mount custom Nginx configuration
+      # - ./nginx/conf.d:/etc/nginx/conf.d  # Mount additional Nginx configuration files
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - app_network # Connect the 'nginx' service to the 'app_network' network
+
+# Custom Docker network named 'app_network' for the services to communicate
+networks:
+  app_network:
+
+# Volume to store 'redis' db data 
+volumes:
+  redis-data:

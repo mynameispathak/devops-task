@@ -13,12 +13,12 @@ This is a sample `Go` application which connects to Redis. The app increments a 
 
 ## Tasks
 
-- Create a `Dockerfile` for the app.
+- Create a `Dockerfile` for the app. [DONE]
 
 - Create a `docker-compose.yml` for the app which includes the following:
-  - `redis` service, with data directory mounted.
-  - `app` service, ensuring that it has a dependency on the Redis service starting correctly.
-  - `nginx` service acting as a reverse proxy for the app. Bonus: Implement SSL using self-signed certificates.
+  - `redis` service, with data directory mounted. [DONE]
+  - `app` service, ensuring that it has a dependency on the Redis service starting correctly. [DONE]
+  - `nginx` service acting as a reverse proxy for the app. Bonus: Implement SSL using self-signed certificates. [DONE]
 
 - Write a bash script to set up a [Vagrant box](https://vagrant.io) with Ubuntu. Ensure the script has error checks and is idempotent.
 

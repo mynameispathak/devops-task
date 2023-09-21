@@ -1,0 +1,4 @@
+demo.bin
+*.env
+*.rdb
+.vagrant
