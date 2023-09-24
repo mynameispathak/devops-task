@@ -9,12 +9,19 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/gomodule/redigo/redis"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
 	// injected during build
-	version  = "unknown"
-	keyspace = "demo:requests"
+	version      = "unknown"
+	keyspace     = "demo:requests"
+	opsProcessed = promauto.NewCounter(prometheus.CounterOpts{
+		Name: "demo_ops_app_key_count",
+		Help: "The key count in redis.",
+	})
 )
 
 // initCachePool initializes redis for cache
@@ -46,6 +53,10 @@ func main() {
 
 	// initialise handlers
 	r := chi.NewRouter()
+
+	// Prometheus /metrics endpoint
+	r.Handle("/metrics", promhttp.Handler())
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		err = incrementKey(conn)
 		if err != nil {
@@ -57,6 +68,8 @@ func main() {
 			w.Write([]byte(fmt.Sprintf("oops something went wrong: %v", err)))
 			return
 		}
+		// Increment Prometheus counter
+		opsProcessed.Inc()
 		w.Write([]byte(fmt.Sprintf("welcome to api. key count is: %d", val)))
 	})
 	addr := os.Getenv("DEMO_APP_ADDR")
