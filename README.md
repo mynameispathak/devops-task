@@ -44,7 +44,8 @@ The ansible playbook can be found at: `./playbooks`
   - [x] Create a user `demo`.
   - [ ] Harden the security:
     - [x] Disable root login.
-    - [ ] Setup a basic firewall (e.g., UFW) allowing only specific ports. (Unable to allow ports via firewall using qemu Vagrant provider, so as a workaround I have forwared the required ports to host machine)
+    - [ ] Setup a basic firewall (e.g., UFW) allowing only specific ports. 
+      - `(Unable to allow ports via firewall using qemu Vagrant provider, so as a workaround I have forwarded the required ports to host machine)`
   - [ ] Configure `sysctl` for sane defaults. (For eg: increasing open files limit) [`SKIPPED due to time constraint`]
   - [ ] Configure sysctl for sane defaults. For each sysctl parameter changed: [`SKIPPED due to time constraint`]
     - [ ] Document the change.
@@ -54,7 +55,7 @@ The ansible playbook can be found at: `./playbooks`
   - [x] Configure Docker Daemon to have sane defaults. For eg: keep logs size in check.
   - [x] Deploy the `docker-compose.yml` in `/etc/demo-ops` and start the services.
   - [x] Bonus: Install and configure monitoring tools like Prometheus and Grafana. Ensure app and redis metrics are being scraped.
-    - ![grafana_dashboard](grafana_dashboard.png)
+    - ![grafana_dashboard](./grafana_dashboard.png)
 
 - [x] Commit the scripts to Github and share the link.
 
