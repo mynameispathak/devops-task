@@ -55,7 +55,8 @@ The ansible playbook can be found at: `./playbooks`
   - [x] Configure Docker Daemon to have sane defaults. For eg: keep logs size in check.
   - [x] Deploy the `docker-compose.yml` in `/etc/demo-ops` and start the services.
   - [x] Bonus: Install and configure monitoring tools like Prometheus and Grafana. Ensure app and redis metrics are being scraped.
-    - ![grafana_dashboard](./grafana_dashboard.png)
+    - <img width="1440" alt="grafana_dashboard" src="https://github.com/mynameispathak/devops-task/assets/40513834/2e71ce52-a410-4cee-bb4e-1e169e79b739">
+
 
 - [x] Commit the scripts to Github and share the link.
 
