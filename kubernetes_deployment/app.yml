@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: app
+        image: mynameispathak/ops-task-app:v1
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "100m"
+        env:
+          - name: DEMO_APP_ADDR
+            value: 0.0.0.0:8080
+          - name: DEMO_REDIS_ADDR
+            value: redis:6379
+        ports:
+        - containerPort: 8080
+      initContainers:
+        - name: wait-for-redis
+          image: busybox
+          command: ["sh", "-c", "until nc -z -v -w5 redis 6379; do sleep 5; done"]
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app
+spec:
+  selector:
+    app: app
+  type: ClusterIP
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+
