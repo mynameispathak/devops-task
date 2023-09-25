@@ -89,12 +89,18 @@
       pip:
         name: docker-compose
 
+    - name: Configure Docker Daemon to have sane defaults
+      file:
+        state: directory
+        path: "/tmp/ansible_dds" 
+    
+
     #####################
     # Copy and Deploy
     ####################
     - name: copy file to remote host
       copy:
-        src: ./app/
+        src: ../app/
         dest: /etc/demo-ops  
  
     - name: (Working directory changed to `/etc/demo-ops`) Starting the server...
@@ -117,7 +123,7 @@
 
     - name: Copy Prometheus configuration file
       copy:
-        src: ./app/config/prometheus/prometheus.yml
+        src: ../app/config/prometheus/prometheus.yml
         dest: /etc/prometheus/prometheus.yml
       notify: Restart Prometheus
 
@@ -150,13 +156,13 @@
 
     - name: Copy Grafana datasource configuration file
       copy:
-        src: ./app/config/grafana/datasources.yml
+        src: ../app/config/grafana/datasources.yml
         dest: /etc/grafana/provisioning/datasources/datasource.yml
       notify: Restart Grafana
 
     - name: Copy Grafana dashboards (optional)
       copy:
-        src: ./app/config/grafana/dashboards/
+        src: ../app/config/grafana/dashboards/
         dest: /etc/grafana/provisioning/dashboards
       notify: Restart Grafana
 
