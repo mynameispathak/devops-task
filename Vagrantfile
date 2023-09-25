@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
 
     config.vm.provision :ansible do |ansible|
       ansible.version = "2.15.4"
-      ansible.playbook = "main.ansible.yml"
+      ansible.playbook = "playbooks/main.ansible.yml"
     end
     
   end
