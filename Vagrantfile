@@ -9,6 +9,7 @@ Vagrant.configure("2") do |config|
     # ubuntu_vm.vm.network :private_network, ip: "192.168.0.160"
     # ubuntu_vm.vm.network :public_network, ip: "192.168.0.161"
     ubuntu_vm.vm.network "forwarded_port", guest: 80, host: 80
+    ubuntu_vm.vm.network "forwarded_port", guest: 443, host: 443
     ubuntu_vm.vm.network "forwarded_port", guest: 8080, host: 8080
     ubuntu_vm.vm.network "forwarded_port", guest: 9090, host: 9090
     ubuntu_vm.vm.network "forwarded_port", guest: 3000, host: 3000
