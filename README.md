@@ -14,12 +14,12 @@ This is a sample `Go` application which connects to Redis. The app increments a 
 ---
 ## Tasks
 
-- Create a `Dockerfile` for the app. [DONE]
+- [x] Create a `Dockerfile` for the app.
 
-- Create a `docker-compose.yml` for the app which includes the following:
-  - [X] `redis` service, with data directory mounted. [DONE]
-  - [X] `app` service, ensuring that it has a dependency on the Redis service starting correctly. [DONE]
-  - [X] `nginx` service acting as a reverse proxy for the app. [DONE]
+- [x] Create a `docker-compose.yml` for the app which includes the following:
+  - [X] `redis` service, with data directory mounted.
+  - [X] `app` service, ensuring that it has a dependency on the Redis service starting correctly.
+  - [X] `nginx` service acting as a reverse proxy for the app.
     - [x] Bonus: Implement SSL using self-signed certificates. 
       - Generate the certs using: `./scripts/ssl/generate_self_signed_certs.sh`
       - The Nginx config can be found at: `./app/config/nginx`
