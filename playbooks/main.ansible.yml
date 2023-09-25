@@ -1,0 +1,210 @@
+- hosts: all
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: set_hostname
+      hostname:
+        name: demo-ops
+    - name: create_user
+      user:
+        name: demo
+    - name: disable_root_login
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: "PermitRootLogin no"
+        state: present
+        backup: yes
+      become: yes
+      notify:
+        - restart ssh
+
+    - name: Install UFW (Uncomplicated Firewall)
+      apt:
+        name: ufw
+        state: present
+    - name: Allow HTTP (Port 80)
+      ufw:
+        rule: allow
+        port: 80
+        proto: tcp
+    - name: Allow HTTP (Port 8080)
+      ufw:
+        rule: allow
+        port: 8080
+        proto: tcp
+
+    - name: set_timezone
+      timezone:
+        name: Asia/Kolkata
+
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: install_system_packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    #################
+    # Docker
+    #################
+    - name: Add Docker GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable"
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    # - name: Install Docker Module for Python
+    #   pip:
+    #     name: docker
+    
+    - name: Install prerequisites for docker-compose
+      apt:
+        name: ['python3-pip', 'python3-setuptools', 'virtualenv']
+
+    - name: Install docker-compose
+      pip:
+        name: docker-compose
+
+    #####################
+    # Copy and Deploy
+    ####################
+    - name: copy file to remote host
+      copy:
+        src: ./app/
+        dest: /etc/demo-ops  
+ 
+    - name: (Working directory changed to `/etc/demo-ops`) Starting the server...
+      shell: docker-compose up -d
+      args:
+        chdir: /etc/demo-ops  
+
+    ################
+    # Prometheus
+    ################
+    - name: Install Prometheus
+      apt:
+        name: prometheus
+        state: present
+
+    # - name: Enable Prometheus alert manager
+    #   systemd:
+    #     name: alertmanager.service
+    #     enabled: yes
+
+    - name: Copy Prometheus configuration file
+      copy:
+        src: ./app/config/prometheus/prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
+      notify: Restart Prometheus
+
+    - name: Start Prometheus service
+      service:
+        name: prometheus
+        state: started
+        enabled: yes
+      
+    ################
+    # Grafana
+    ################
+    - name: Import Grafana GPG key
+      apt_key:
+        url: https://packages.grafana.com/gpg.key
+        state: present
+    - name: Add Grafana APT repository
+      apt_repository:
+        repo: deb https://packages.grafana.com/oss/deb stable main
+        state: present
+
+    - name: Update APT cache
+      apt:
+        update_cache: yes
+
+    - name: Install Grafana
+      apt:
+        name: grafana
+        state: present
+
+    - name: Copy Grafana datasource configuration file
+      copy:
+        src: ./app/config/grafana/datasources.yml
+        dest: /etc/grafana/provisioning/datasources/datasource.yml
+      notify: Restart Grafana
+
+    - name: Copy Grafana dashboards (optional)
+      copy:
+        src: ./app/config/grafana/dashboards/
+        dest: /etc/grafana/provisioning/dashboards
+      notify: Restart Grafana
+
+    - name: Start Grafana service
+      service:
+        name: grafana-server
+        state: started
+        enabled: yes
+    - name: wait for service up
+      uri:
+        url: "http://127.0.0.1:3000"
+        status_code: 200
+      register: __result
+      until: __result.status == 200
+      retries: 120
+      delay: 1
+
+    - name: change admin password for grafana gui
+      shell : "grafana-cli admin reset-admin-password admin"
+      register: __command_admin
+      changed_when: __command_admin.rc !=0
+
+    # - name: Reload Prometheus service
+    #   systemd:
+    #     name: prometheus.service
+    #     state: reloaded
+    #   notify: Restart Prometheus
+
+
+  handlers:
+    - name: restart ssh
+      service:
+        name: sshd
+        state: restarted
+    - name: Restart Prometheus
+      service:
+        name: prometheus
+        state: restarted
+    - name: Reload Prometheus
+      uri:
+        url: http://localhost:9090/-/reload
+        method: POST
+        status_code: 200
+    - name: Restart Grafana
+      service:
+        name: grafana-server
+        state: restarted
+
+
+
+    
